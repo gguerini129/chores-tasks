@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register a profile</title>
+</head>
+<body>
+    <h1>Chores & Tasks Registration</h1>
+        <a href="{{ url_for('login') }}" class="active">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        <form action="{{ url_for('register') }}" method="post">
+            <input type="text" name="username" placeholder="Username" id="username" required>
+            <input type="text" name="password" placeholder="Password" id="password" required>
+            <input type="text" name="first_name" placeholder="First name" id="first_name" required>
+            <input type="text" name="last_name" placeholder="Last name" id="last_name" required>
+            <input type="submit" value="Register account">
+        </form>
+    </div>
+</body>
+</html>
