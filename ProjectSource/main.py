@@ -32,6 +32,9 @@ def login():
     :return: render_template to the homepage of the application.
     """
 
+    # Display a message to the user if log in is unsuccessful
+    msg = ""
+
     if request.method == "POST" and 'username' in request.form and 'password' in request.form:
 
         username = request.form['username']
@@ -48,11 +51,15 @@ def login():
             # about the user, but that is a feature that will be implemented
             # later when the homepage is complete.
             #
-            return render_template("home.html", username = username)
+            username = account["username"]
+            first_name = account["first_name"]
+            email = account["email"]
 
+            return render_template("home.html", username = username, first_name = first_name, email = email)
+        else:
+            msg = "Invalid credentials entered. Try again, or click the register link to create an account."
 
-    alert = "Invalid credentials entered"
-    return render_template("index.html")
+    return render_template("index.html", msg = msg)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -72,9 +79,6 @@ def register():
         email = request.form['email']
         first_name = request.form['first_name']
         last_name = request.form['last_name']
-
-        # Unique identifier for user. When registered, the user gets the highest number
-        user_id = -1
 
         # Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -98,32 +102,28 @@ def register():
 
             #create unique ID for user (MAX of user_id + 1)
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            cursor.execute('SELECT (MAX(user_id) + 1) as new_id from user')
-            cursor.execute('INSERT INTO user (username, password, email) VALUES ( %s, %s, %s)',
-                           (username, password, email,))
+            cursor.execute('INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)', (username, password, email, first_name, last_name,))
             # default id is -1, but it is updated to MAX + 1
 
             mysql.connection.commit()
-            cursor.close()
-            msg = 'You have successfully registered!'
-            return render_template("index.html")
 
-
+            msg = 'You have successfully registered! Please log in using your newly-created account.'
+            return render_template("index.html", msg = msg)
 
     elif request.method == 'POST':
         # Form is empty... (no POST data)
         msg = 'Please fill out the form!'
 
-    return render_template('register.html')
+    return render_template('register.html', msg = msg)
 
 
-
+@app.route('/logout', methods = ["GET", "POST"])
 def logout():
     """
     Logs a user out.
-    :return:
+    :return: renders the log in screen with a message indicating that the user logged out.
     """
-
+    return render_template("index.html", msg = "You have logged out")
 
 if __name__ == "__main__":
     app.run()

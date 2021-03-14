@@ -5,6 +5,9 @@
     <title>Homepage!</title>
 </head>
 <body>
-    This is the homepage. Will link to various features and show basic user info.
+    Hello {{ first_name }}! This is the homepage for the application.<br>
+    Here, you will also see your email ({{ email }}) and your username ({{ username }}).<br>
+    There is also a link for you to log out:
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
