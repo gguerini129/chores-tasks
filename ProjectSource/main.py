@@ -77,8 +77,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
+        first_name = request.form['first-name']
+        last_name = request.form['last-name']
 
         # Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
