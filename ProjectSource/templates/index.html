@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta charset="UTF-8">
     <title>Login</title>
+    <style>
+        body { background-color: honeydew; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
 </head>
-
 <body>
-    <h1>Chores & Tasks Login</h1>
-    <div class="Login">
-        <a href="{{ url_for('login') }}" class="active">Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
-        <form action="{{ url_for('login') }}" method="post">
-            <input type="text" name="username" placeholder="Username" id="username" required>
-            <input type="text" name="password" placeholder="Password" id="password" required>
-            <input type="submit" value="Login">
-            <div class="msg">{{ msg }}</div>
-        </form>
+    <div class="container">
+        <header class="plate">
+            <h1 class="text-center">Chores & Tasks</h1>
+        </header>
+        <nav class="plate">
+            <ul class="nav-list">
+                <li>Login</li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            </ul>
+        </nav>
+        <main class="plate"><form action="{{ url_for('login') }}" method="post">
+            <div class="form-grid">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" maxlength="32" required="" />
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" maxlength="32" required="" />
+            </div>
+            <button class="submit">Login</button>
+        </form></main>
     </div>
 </body>
 </html>

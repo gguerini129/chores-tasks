@@ -1,21 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Register a profile</title>
+    <title>Register</title>
+    <style>
+        body { background-color: mistyrose; }
+    </style>
+    <link rel="stylesheet" href="stylesheet.css" />
 </head>
 <body>
-    <h1>Chores & Tasks Registration</h1>
-        <a href="{{ url_for('login') }}" class="active">Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
-        <form action="{{ url_for('register') }}" method="post">
-            <input type="text" name="username" placeholder="Username" id="username" required>
-            <input type="text" name="password" placeholder="Password" id="password" required>
-            <input type="text" name="email" placeholder="Email" id="email" required>
-            <input type="text" name="first_name" placeholder="First name" id="first_name" required>
-            <input type="text" name="last_name" placeholder="Last name" id="last_name" required>
-            <input type="submit" value="Register account">
-        </form>
-        <div class="msg">{{ msg }}</div>
+    <div class="container">
+        <header class="plate">
+            <h1 class="text-center">Chores & Tasks</h1>
+        </header>
+        <nav class="plate">
+            <ul class="nav-list">
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li>Register</li>
+            </ul>
+        </nav>
+        <main class="plate"><form action="{{ url_for('register') }}" method="post">
+            <div class="form-grid">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" maxlength="32" required="" />
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" maxlength="32" required="" />
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" maxlength="32" required="" />
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" maxlength="32" required="" />
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" maxlength="64" required="" />
+            </div>
+            <button class="submit">Register</button>
+        </form></main>
+    </div>
 </body>
 </html>
