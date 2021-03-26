@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Register</title>
-    <style>
-        body { background-color: mistyrose; }
-    </style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 </head>
 <body>
     <div class="container">
         <header class="plate">
-            <h1 class="text-center">Chores & Tasks</h1>
+            <h1>Chores & Tasks</h1>
         </header>
         <nav class="plate">
             <ul class="nav-list">
@@ -18,21 +16,25 @@
                 <li>Register</li>
             </ul>
         </nav>
-        <main class="plate"><form action="{{ url_for('register') }}" method="post">
-            <div class="form-grid">
-                <label for="first-name">First Name:</label>
-                <input type="text" id="first-name" name="first-name" maxlength="32" required="" />
-                <label for="last-name">Last Name:</label>
-                <input type="text" id="last-name" name="last-name" maxlength="32" required="" />
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" maxlength="32" required="" />
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" maxlength="32" required="" />
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" maxlength="64" required="" />
-            </div>
-            <button class="submit">Register</button>
-        </form></main>
+        <main class="plate">
+            <form action="{{ url_for('register') }}" method="post">
+                <div class="form-grid">
+                    <label for="first-name">First Name:</label>
+                    <input type="text" id="first-name" name="first-name" maxlength="32" required="" />
+                    <label for="last-name">Last Name:</label>
+                    <input type="text" id="last-name" name="last-name" maxlength="32" required="" />
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" maxlength="32" required="" />
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" maxlength="32" required="" />
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" maxlength="64" required="" />
+                </div>
+                <button class="submit">Go</button>
+            </form>
+            <hr />
+            <p>{{ msg }}</p>
+        </main>
     </div>
 </body>
 </html>

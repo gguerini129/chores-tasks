@@ -1,129 +1,146 @@
-import MySQLdb
-from flask import Flask, render_template, request, redirect, url_for, session
+# Stockton University CSCI-4485 - Software Engineering (Spring 2021)
+# Chores & Tasks Project
+# GitHub: https://github.com/gguerini129/chores-tasks/
+
+from flask import Flask, render_template, url_for, redirect, session, request
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
 
-# Stockton University CSCI-4485 - Software Engineering (Spring 2021)
-#
-# Student Task Manager project
-# (add link to Github repo)
-#
+# INITIALIZATION
 
-# 3. Log out
-#    a. log out redirects to log in page
-#
-#
-
-# initialize Flask and mysql and log in
 app = Flask(__name__)
 mysql = MySQL(app)
-app.config['MYSQL_HOST'] = "localhost"
-app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "root"
-app.config['MYSQL_DB'] = "user"
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'mysql'
+app.config['MYSQL_DB'] = 'chores_tasks'
 app.secret_key = 'secretKey'
 
-@app.route("/", methods=['GET', 'POST'])
-def login():
+# INDEX VIEW FUNCTION
+@app.route('/')
+def index():
     """
-    Verifies if the credentials exist, and allows the user to log in if so.
-    Otherwise, a message is displayed that the account does not exist.
-    :return: render_template to the homepage of the application.
+    :return: render_template of the next page
     """
+    return redirect(url_for('login'))
 
-    # Display a message to the user if log in is unsuccessful
-    msg = ""
-
-    if request.method == "POST" and 'username' in request.form and 'password' in request.form:
-
+# REGISTER VIEW FUNCTION
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """
+    Renders the registration page for get and post requests
+    Displays a message when the registration is invalid
+    :return: render_template for the next page
+    """
+    
+    msg = 'Nothing to report.'
+    
+    if request.method == 'POST' and 'first-name' in request.form and 'last-name' in request.form and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        first_name = request.form['first-name']
+        last_name = request.form['last-name']
         username = request.form['username']
         password = request.form['password']
-
+        email = request.form['email']
+        
+        # if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            # msg = 'Invalid email address!'
+        # elif not re.match(r'[A-Za-z0-9]+', username):
+            # msg = 'Username must contain only characters and numbers!'
+        # elif not username or not password or not email:
+            # msg = 'Please fill out the form!'
+        
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
+        account = cursor.fetchone()
+        
+        if account is None:
+            cursor.execute('INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)', (username, password, email, first_name, last_name,))
+            mysql.connection.commit()
+            
+            session['first_name'] = first_name
+            session['last_name'] = last_name
+            session['username'] = username
+            session['password'] = password
+            session['email'] = email
+            
+            return redirect(url_for('home'))
+        else:
+            msg = 'Username already taken.'
+    
+    return render_template('register.html', msg=msg)
 
+# LOGIN VIEW FUNCTION
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Renders the login page for get and post requests
+    Displays a message when the login is invalid
+    :return: render_template for the next page
+    """
+    
+    msg = 'Nothing to report.'
+    
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM user WHERE username = %s AND password = %s', (username, password,))
         account = cursor.fetchone()
-
-        if account:
+        
+        if account is not None:
             # All home page will need for now.
             # May need to close cursor in this block later to gather more info
             # about the user, but that is a feature that will be implemented
             # later when the homepage is complete.
             #
-            username = account["username"]
-            first_name = account["first_name"]
-            email = account["email"]
-
-            return render_template("home.html", username = username, first_name = first_name, email = email)
+            session['first_name'] = account['first_name']
+            session['last_name'] = account['last_name']
+            session['username'] = username
+            session['password'] = password
+            session['email'] = account['email']
+            
+            return redirect(url_for('home'))
         else:
-            msg = "Invalid credentials entered. Try again, or click the register link to create an account."
+            msg = 'Incorrect login details.'
+    
+    return render_template('login.html', msg=msg)
 
-    return render_template("index.html", msg = msg)
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """
-    Registers a new user if the username and email are unique.
-    :return: Redirects to log in page for user to log in with new account.
-    """
-
-    # Output message if something goes wrong...
-    msg = ''
-
-    # Check if "username", "password" and "email" POST requests exist (user submitted form)
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
-
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        first_name = request.form['first-name']
-        last_name = request.form['last-name']
-
-        # Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
-        account = cursor.fetchone()
-
-        # If account exists show error and validation checks
-        if account:
-            msg = 'Account already exists!'
-
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
-
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers!'
-
-        elif not username or not password or not email:
-            msg = 'Please fill out the form!'
-
-        else:
-
-            #create unique ID for user (MAX of user_id + 1)
-            # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            cursor.execute('INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)', (username, password, email, first_name, last_name,))
-            # default id is -1, but it is updated to MAX + 1
-
-            mysql.connection.commit()
-
-            msg = 'You have successfully registered! Please log in using your newly-created account.'
-            return render_template("index.html", msg = msg)
-
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        msg = 'Please fill out the form!'
-
-    return render_template('register.html', msg = msg)
-
-
-@app.route('/logout', methods = ["GET", "POST"])
+# LOGOUT VIEW FUNCTION
+@app.route('/logout', methods = ['GET'])
 def logout():
     """
     Logs a user out.
     :return: renders the log in screen with a message indicating that the user logged out.
     """
-    return render_template("index.html", msg = "You have logged out")
+    
+    session.pop('first_name', None)
+    session.pop('last_name', None)
+    session.pop('username', None)
+    session.pop('password', None)
+    session.pop('email', None)
+    
+    return redirect(url_for('login'))
 
+# HOME VIEW FUNCTION
+@app.route('/home', methods = ['GET', 'POST'])
+def home():
+    first_name = session['first_name']
+    last_name  = session['last_name']
+    username = session['username']
+    password = session['password']
+    email = session['email']
+    
+    tasklists = ''
+    
+    for i in range(5):
+        tasklists = tasklists + '<option value="tasklist' + str(i) + '">Task List ' + str(i + 1) + '</option>'
+    
+    print(tasklists)
+    
+    return render_template('home.html', first_name=first_name, last_name=last_name, username=username, password=password, email=email, tasklists=tasklists)
+
+# EXECUTION
 if __name__ == "__main__":
     app.run()

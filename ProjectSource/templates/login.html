@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 </head>
 <body>
@@ -12,23 +12,22 @@
         </header>
         <nav class="plate">
             <ul class="nav-list">
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li>Login</li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
             </ul>
         </nav>
         <main class="plate">
-            <p>Hi, {{ first_name }} {{ last_name }}, your username is {{ username }} and email is {{ email }}.</p>
-            <hr />
-            <form>
+            <form action="{{ url_for('login') }}" method="post">
                 <div class="form-grid">
-                    <label for="input">Input: </label>
-                    <input type="text" id="input" name="input2" required="" />
-                    <label for="task-list">Task List:</label>
-                    <select id="task-list">
-                        <option value="test">Tests</option>
-                    </select>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" maxlength="32" required="" />
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" maxlength="32" required="" />
                 </div>
                 <button class="submit">Go</button>
             </form>
+            <hr />
+            <p>{{ msg }}</p>
         </main>
     </div>
 </body>
