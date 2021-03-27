@@ -126,12 +126,6 @@ def logout():
 # HOME VIEW FUNCTION
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
-    first_name = session['first_name']
-    last_name  = session['last_name']
-    username = session['username']
-    password = session['password']
-    email = session['email']
-    
     tasklists = ''
     
     for i in range(5):
@@ -139,7 +133,7 @@ def home():
     
     print(tasklists)
     
-    return render_template('home.html', first_name=first_name, last_name=last_name, username=username, password=password, email=email, tasklists=tasklists)
+    return render_template('home.html', tasklists=tasklists)
 
 # EXECUTION
 if __name__ == "__main__":

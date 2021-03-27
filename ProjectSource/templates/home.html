@@ -7,7 +7,7 @@
     <li><a href="{{ url_for('logout') }}">Logout</a></li>
 {% endblock %}
 {% block main %}
-    <p>Hi, {{ first_name }} {{ last_name }}, your username is {{ username }} and email is {{ email }}.</p>
+    <p>Hi, {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
     <hr />
     <form>
         <div class="form-grid">
@@ -15,7 +15,7 @@
             <input type="text" id="input" name="input2" required="" />
             <label for="task-list">Task List:</label>
             <select id="task-list">
-                <option value="test">Tests</option>
+                <option value="test">Test</option>
             </select>
         </div>
         <button class="submit">Go</button>
