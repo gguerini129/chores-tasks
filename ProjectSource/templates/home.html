@@ -1,35 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
-</head>
-<body>
-    <div class="container">
-        <header class="plate">
-            <h1>Chores & Tasks</h1>
-        </header>
-        <nav class="plate">
-            <ul class="nav-list">
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        <main class="plate">
-            <p>Hi, {{ first_name }} {{ last_name }}, your username is {{ username }} and email is {{ email }}.</p>
-            <hr />
-            <form>
-                <div class="form-grid">
-                    <label for="input">Input: </label>
-                    <input type="text" id="input" name="input2" required="" />
-                    <label for="task-list">Task List:</label>
-                    <select id="task-list">
-                        <option value="test">Tests</option>
-                    </select>
-                </div>
-                <button class="submit">Go</button>
-            </form>
-        </main>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>Home</h1>
+{% endblock %}
+{% block nav %}
+    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+{% endblock %}
+{% block main %}
+    <p>Hi, {{ first_name }} {{ last_name }}, your username is {{ username }} and email is {{ email }}.</p>
+    <hr />
+    <form>
+        <div class="form-grid">
+            <label for="input">Input: </label>
+            <input type="text" id="input" name="input2" required="" />
+            <label for="task-list">Task List:</label>
+            <select id="task-list">
+                <option value="test">Tests</option>
+            </select>
+        </div>
+        <button class="submit">Go</button>
+    </form>
+{% endblock %}

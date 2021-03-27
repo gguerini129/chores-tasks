@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chores & Tasks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
+</head>
+<body><div class="container">
+    <header class="plate">
+        {% block header %}
+            <h1>Chores % Tasks</h1>
+        {% endblock header %}
+    </header>
+    <nav class="plate"><ul class="nav-list">
+        {% block nav %}
+            <li>Overwrite This</li>
+        {% endblock %}
+    </ul></nav>
+    <main class="plate">
+        {% block main %}
+            <p>Overwrite This</p>
+        {% endblock %}
+    </main>
+</div></body>
+</html>

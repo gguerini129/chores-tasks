@@ -1,34 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
-</head>
-<body>
-    <div class="container">
-        <header class="plate">
-            <h1>Chores & Tasks</h1>
-        </header>
-        <nav class="plate">
-            <ul class="nav-list">
-                <li>Login</li>
-                <li><a href="{{ url_for('register') }}">Register</a></li>
-            </ul>
-        </nav>
-        <main class="plate">
-            <form action="{{ url_for('login') }}" method="post">
-                <div class="form-grid">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" maxlength="32" required="" />
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" maxlength="32" required="" />
-                </div>
-                <button class="submit">Go</button>
-            </form>
-            <hr />
-            <p>{{ msg }}</p>
-        </main>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>Login</h1>
+{% endblock %}
+{% block nav %}
+    <li>Login</li>
+    <li><a href="{{ url_for('register') }}">Register</a></li>
+{% endblock %}
+{% block main %}
+    <form action="{{ url_for('login') }}" method="post">
+        <div class="form-grid">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" maxlength="32" required="" />
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" maxlength="32" required="" />
+        </div>
+        <button class="submit">Go</button>
+    </form>
+    <hr />
+    <p>{{ msg }}</p>
+{% endblock %}
