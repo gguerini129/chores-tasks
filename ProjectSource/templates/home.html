@@ -11,11 +11,11 @@
     <hr />
     <form>
         <div class="form-grid">
-            <label for="input">Input: </label>
-            <input type="text" id="input" name="input2" required="" />
-            <label for="task-list">Task List:</label>
-            <select id="task-list">
-                <option value="test">Test</option>
+            <label for="task-lists">Task Lists:</label>
+            <select id="task-lists">
+                {% for list_name, list_id in lists.items() %}
+                    <option value="{{ list_id }}">{{ list_name }}</option>
+                {% endfor %}
             </select>
         </div>
         <button class="submit">Go</button>

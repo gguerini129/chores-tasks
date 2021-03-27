@@ -11,22 +11,22 @@ import re
 
 app = Flask(__name__)
 mysql = MySQL(app)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'mysql'
-app.config['MYSQL_DB'] = 'chores_tasks'
-app.secret_key = 'secretKey'
+app.config["MYSQL_HOST"] = "localhost"
+app.config["MYSQL_USER"] = "root"
+app.config["MYSQL_PASSWORD"] = "mysql"
+app.config["MYSQL_DB"] = "chores_tasks"
+app.secret_key = "secretKey"
 
 # INDEX VIEW FUNCTION
-@app.route('/')
+@app.route("/")
 def index():
     """
     :return: render_template of the next page
     """
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 # REGISTER VIEW FUNCTION
-@app.route('/register', methods=['GET', 'POST'])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     """
     Renders the registration page for get and post requests
@@ -34,44 +34,44 @@ def register():
     :return: render_template for the next page
     """
     
-    msg = 'Nothing to report.'
+    msg = "Nothing to report."
     
-    if request.method == 'POST' and 'first-name' in request.form and 'last-name' in request.form and 'username' in request.form and 'password' in request.form and 'email' in request.form:
-        first_name = request.form['first-name']
-        last_name = request.form['last-name']
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
+    if request.method == "POST" and "first-name" in request.form and "last-name" in request.form and "username" in request.form and "password" in request.form and "email" in request.form:
+        first_name = request.form["first-name"]
+        last_name = request.form["last-name"]
+        username = request.form["username"]
+        password = request.form["password"]
+        email = request.form["email"]
         
-        # if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            # msg = 'Invalid email address!'
-        # elif not re.match(r'[A-Za-z0-9]+', username):
-            # msg = 'Username must contain only characters and numbers!'
+        # if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            # msg = "Invalid email address!"
+        # elif not re.match(r"[A-Za-z0-9]+", username):
+            # msg = "Username must contain only characters and numbers!"
         # elif not username or not password or not email:
-            # msg = 'Please fill out the form!'
+            # msg = "Please fill out the form!"
         
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
+        cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
         account = cursor.fetchone()
         
         if account is None:
-            cursor.execute('INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)', (username, password, email, first_name, last_name,))
+            cursor.execute("INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)", (username, password, email, first_name, last_name,))
             mysql.connection.commit()
             
-            session['first_name'] = first_name
-            session['last_name'] = last_name
-            session['username'] = username
-            session['password'] = password
-            session['email'] = email
+            session["first_name"] = first_name
+            session["last_name"] = last_name
+            session["username"] = username
+            session["password"] = password
+            session["email"] = email
             
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
         else:
-            msg = 'Username already taken.'
+            msg = "Username already taken."
     
-    return render_template('register.html', msg=msg)
+    return render_template("register.html", msg=msg)
 
 # LOGIN VIEW FUNCTION
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     """
     Renders the login page for get and post requests
@@ -79,14 +79,14 @@ def login():
     :return: render_template for the next page
     """
     
-    msg = 'Nothing to report.'
+    msg = "Nothing to report."
     
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
+    if request.method == "POST" and "username" in request.form and "password" in request.form:
+        username = request.form["username"]
+        password = request.form["password"]
         
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user WHERE username = %s AND password = %s', (username, password,))
+        cursor.execute("SELECT * FROM user WHERE username = %s AND password = %s", (username, password,))
         account = cursor.fetchone()
         
         if account is not None:
@@ -95,45 +95,44 @@ def login():
             # about the user, but that is a feature that will be implemented
             # later when the homepage is complete.
             #
-            session['first_name'] = account['first_name']
-            session['last_name'] = account['last_name']
-            session['username'] = username
-            session['password'] = password
-            session['email'] = account['email']
+            session["first_name"] = account["first_name"]
+            session["last_name"] = account["last_name"]
+            session["username"] = username
+            session["password"] = password
+            session["email"] = account["email"]
             
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
         else:
-            msg = 'Incorrect login details.'
+            msg = "Incorrect login details."
     
-    return render_template('login.html', msg=msg)
+    return render_template("login.html", msg=msg)
 
 # LOGOUT VIEW FUNCTION
-@app.route('/logout', methods = ['GET'])
+@app.route("/logout", methods = ["GET"])
 def logout():
     """
     Logs a user out.
     :return: renders the log in screen with a message indicating that the user logged out.
     """
     
-    session.pop('first_name', None)
-    session.pop('last_name', None)
-    session.pop('username', None)
-    session.pop('password', None)
-    session.pop('email', None)
+    session.pop("first_name", None)
+    session.pop("last_name", None)
+    session.pop("username", None)
+    session.pop("password", None)
+    session.pop("email", None)
     
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 # HOME VIEW FUNCTION
-@app.route('/home', methods = ['GET', 'POST'])
+@app.route("/home", methods = ["GET", "POST"])
 def home():
-    tasklists = ''
+    lists = {
+        "Brian's Task List": 0,
+        "Courtney's Task List": 1,
+        "The Mega Awesome List": 2
+    }
     
-    for i in range(5):
-        tasklists = tasklists + '<option value="tasklist' + str(i) + '">Task List ' + str(i + 1) + '</option>'
-    
-    print(tasklists)
-    
-    return render_template('home.html', tasklists=tasklists)
+    return render_template("home.html", lists=lists)
 
 # EXECUTION
 if __name__ == "__main__":
