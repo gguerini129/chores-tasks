@@ -7,7 +7,7 @@
     <li><a href="{{ url_for('logout') }}">Logout</a></li>
 {% endblock %}
 {% block main %}
-    <p>Hi, {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
+    <p>Hi {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
     <hr />
     <form>
         <div class="form-grid">

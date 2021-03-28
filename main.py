@@ -8,7 +8,6 @@ import MySQLdb.cursors
 import re
 
 # INITIALIZATION
-
 app = Flask(__name__)
 mysql = MySQL(app)
 app.config["MYSQL_HOST"] = "localhost"
@@ -42,13 +41,6 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         email = request.form["email"]
-        
-        # if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            # msg = "Invalid email address!"
-        # elif not re.match(r"[A-Za-z0-9]+", username):
-            # msg = "Username must contain only characters and numbers!"
-        # elif not username or not password or not email:
-            # msg = "Please fill out the form!"
         
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
@@ -90,11 +82,6 @@ def login():
         account = cursor.fetchone()
         
         if account is not None:
-            # All home page will need for now.
-            # May need to close cursor in this block later to gather more info
-            # about the user, but that is a feature that will be implemented
-            # later when the homepage is complete.
-            #
             session["first_name"] = account["first_name"]
             session["last_name"] = account["last_name"]
             session["username"] = username
@@ -111,8 +98,8 @@ def login():
 @app.route("/logout", methods = ["GET"])
 def logout():
     """
-    Logs a user out.
-    :return: renders the log in screen with a message indicating that the user logged out.
+    Logs a user out
+    :return: renders the log in screen with a message indicating that the user logged out
     """
     
     session.pop("first_name", None)
@@ -126,6 +113,13 @@ def logout():
 # HOME VIEW FUNCTION
 @app.route("/home", methods = ["GET", "POST"])
 def home():
+    """
+    Renders the home page for get and post requests
+    :return: render_template for the next page
+    """
+    
+    # The database should be queried to generate this dictionary
+    # The key is the task lists name and the value is the id of the task list
     lists = {
         "Brian's Task List": 0,
         "Courtney's Task List": 1,
@@ -136,4 +130,4 @@ def home():
 
 # EXECUTION
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True) # Setting debug to true tells flask to immediately apply changes in the code
