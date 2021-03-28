@@ -50,6 +50,7 @@ def register():
             cursor.execute("INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)", (username, password, email, first_name, last_name,))
             mysql.connection.commit()
             
+            session["user_id"] = account["user_id"]
             session["first_name"] = first_name
             session["last_name"] = last_name
             session["username"] = username
@@ -59,6 +60,14 @@ def register():
             return redirect(url_for("home"))
         else:
             msg = "Username already taken."
+    
+    # Logs the user out
+    session.pop("user_id", None)
+    session.pop("first_name", None)
+    session.pop("last_name", None)
+    session.pop("username", None)
+    session.pop("password", None)
+    session.pop("email", None)
     
     return render_template("register.html", msg=msg)
 
@@ -82,6 +91,8 @@ def login():
         account = cursor.fetchone()
         
         if account is not None:
+            # Logs the user in
+            session["user_id"] = account["user_id"]
             session["first_name"] = account["first_name"]
             session["last_name"] = account["last_name"]
             session["username"] = username
@@ -92,23 +103,15 @@ def login():
         else:
             msg = "Incorrect login details."
     
-    return render_template("login.html", msg=msg)
-
-# LOGOUT VIEW FUNCTION
-@app.route("/logout", methods = ["GET"])
-def logout():
-    """
-    Logs a user out
-    :return: renders the log in screen with a message indicating that the user logged out
-    """
-    
+    # Logs the user out
+    session.pop("user_id", None)
     session.pop("first_name", None)
     session.pop("last_name", None)
     session.pop("username", None)
     session.pop("password", None)
     session.pop("email", None)
     
-    return redirect(url_for("login"))
+    return render_template("login.html", msg=msg)
 
 # HOME VIEW FUNCTION
 @app.route("/home", methods = ["GET", "POST"])
@@ -117,7 +120,7 @@ def home():
     Renders the home page for get and post requests
     :return: render_template for the next page
     """
-    
+    print(session["user_id"])
     if request.method == "POST":
         if request.form['submit'] == "create":
             print("Creating task list with name " + request.form["task-list-name"])
