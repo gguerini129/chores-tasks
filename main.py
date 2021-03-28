@@ -118,6 +118,12 @@ def home():
     :return: render_template for the next page
     """
     
+    if request.method == "POST":
+        if request.form['submit'] == "create":
+            print("Creating task list with name " + request.form["task-list-name"])
+        elif request.form["submit"] == "view":
+            print("Viewing task list with ID " + request.form["task-list"])
+    
     # The database should be queried to generate this dictionary
     # The key is the task lists name and the value is the id of the task list
     lists = {

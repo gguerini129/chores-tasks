@@ -4,7 +4,7 @@
     <h1>Registration</h1>
 {% endblock %}
 {% block nav %}
-    <li><a href="{{ url_for('login') }}">Login</a></li>
+    <li><a href="{{ url_for('login') }}">Log In</a></li>
     <li>Register</li>
 {% endblock %}
 {% block main %}
@@ -21,7 +21,7 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" maxlength="64" required="" />
         </div>
-        <button class="submit">Go</button>
+        <button class="submit">Register</button>
     </form>
     <hr />
     <p>{{ msg }}</p>

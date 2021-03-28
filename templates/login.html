@@ -4,7 +4,7 @@
     <h1>Login</h1>
 {% endblock %}
 {% block nav %}
-    <li>Login</li>
+    <li>Log In</li>
     <li><a href="{{ url_for('register') }}">Register</a></li>
 {% endblock %}
 {% block main %}
@@ -15,7 +15,7 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" maxlength="32" required="" />
         </div>
-        <button class="submit">Go</button>
+        <button class="submit">Log In</button>
     </form>
     <hr />
     <p>{{ msg }}</p>
