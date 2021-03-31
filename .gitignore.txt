@@ -1,2 +1,3 @@
 # Tells Git to ignore idea folders (hopefully)
 .idea/
+.DS_Store
