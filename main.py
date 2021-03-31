@@ -2,6 +2,9 @@
 # Chores & Tasks Project
 # GitHub: https://github.com/gguerini129/chores-tasks/
 
+# cursor.fetchone() -> returns a dict
+# cursor.fetchall() -> returns a tuple of dicts
+
 from flask import Flask, render_template, url_for, redirect, session, request
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -51,9 +54,7 @@ def register():
             first_name = request.form["first-name"]
             last_name = request.form["last-name"]
 
-            cursor.execute(
-                "INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)",
-                (username, password, email, first_name, last_name,))
+            cursor.execute("INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)", (username, password, email, first_name, last_name,))
             mysql.connection.commit()
 
             cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
@@ -137,7 +138,7 @@ def home():
 
     if request.method == "POST":
         if request.form['submit'] == "create":
-            task_list_name = request.form["task-list-id"]
+            task_list_name = request.form["task-list-name"]
             cursor.execute("INSERT INTO task_list (name) VALUES (%s)", (task_list_name,))
             mysql.connection.commit()
 
@@ -157,15 +158,12 @@ def home():
 
     cursor.execute("SELECT * FROM parent WHERE user_id = %s", (user_id,))
 
-    # print(str(type(cursor.fetchone()))) cursor.fetchone() returns a dict
-    # print(str(type(cursor.fetchall()))) cursor.fetchone() returns a tuple of dicts
-
     for parent_association in cursor.fetchall():
         task_list_ids.add(tuple([parent_association["task_list_id"]]))
 
     pairs = {}
 
-    if (len(task_list_ids) >= 1):
+    if len(task_list_ids) >= 1:
         query = "SELECT * FROM task_list WHERE task_list_id = " + str(list(task_list_ids)[0][0])
 
         for i in range(1, len(task_list_ids)):
