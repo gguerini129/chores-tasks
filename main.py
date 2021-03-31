@@ -137,7 +137,7 @@ def home():
 
     if request.method == "POST":
         if request.form['submit'] == "create":
-            task_list_name = request.form["task-list-name"]
+            task_list_name = request.form["task-list-id"]
             cursor.execute("INSERT INTO task_list (name) VALUES (%s)", (task_list_name,))
             mysql.connection.commit()
 
