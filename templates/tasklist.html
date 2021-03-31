@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{{task_list_name}}</h1>
+{% endblock %}
+{% block nav %}
+    <li><a href="{{ url_for('home') }}">Back</a></li>
+{% endblock %}
+{% block main %}
+    <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
+        <div class="form-grid">
+            <label for="task-name">Enter Name:</label>
+            <input type="text" id="task-name" name="task-name" maxlength="64" required="" />
+            <label for="task-description">Enter Description:</label>
+            <textarea style="resize: none;" id="task-description" name="task-description" maxlength="256"></textarea>
+            <label for="date-time-due">Enter Date-Time Due:</label>
+            <input type="datetime-local" id="date-time-due" name="task-date-time-due" disabled="" />
+        </div>
+        <button class="submit" name="submit" value="create">Create Task</button>
+    </form>
+    <hr />
+    <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
+        <div class="form-grid">
+            <label for="tasks">Tasks:</label>
+            <select id="tasks" name="task-id" required="">
+                {# for name, id in pairs.items() #}
+                    <option value="{# id #}">{# name #}</option>
+                {# endfor #}
+            </select>
+        </div>
+        <button class="submit" name="submit" value="view">Delete Task</button>
+    </form>
+{% endblock %}

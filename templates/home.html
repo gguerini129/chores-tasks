@@ -20,7 +20,7 @@
     <form action="{{ url_for('home') }}" method="post">
         <div class="form-grid">
             <label for="task-lists">Task Lists:</label>
-            <select id="task-lists" name="task-list-id">
+            <select id="task-lists" name="task-list-id" required="">
                 {% for name, id in pairs.items() %}
                     <option value="{{ id }}">{{ name }}</option>
                 {% endfor %}

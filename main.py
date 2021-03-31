@@ -41,7 +41,7 @@ def register():
 
     msg = "Nothing to report."
 
-    if request.method == "POST" and "first-name" in request.form and "last-name" in request.form and "username" in request.form and "password" in request.form and "email" in request.form:
+    if request.method == "POST" and "username" in request.form and "password" in request.form and "email" in request.form and "first-name" in request.form and "last-name" in request.form:
         username = request.form["username"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -62,11 +62,11 @@ def register():
 
             # Logs the user in
             session["user_id"] = account["user_id"]
-            session["first_name"] = first_name
-            session["last_name"] = last_name
             session["username"] = username
             session["password"] = password
             session["email"] = email
+            session["first_name"] = first_name
+            session["last_name"] = last_name
 
             return redirect(url_for("home"))
         else:
@@ -74,11 +74,11 @@ def register():
 
     # Logs the user out
     session.pop("user_id", None)
-    session.pop("first_name", None)
-    session.pop("last_name", None)
     session.pop("username", None)
     session.pop("password", None)
     session.pop("email", None)
+    session.pop("first_name", None)
+    session.pop("last_name", None)
 
     return render_template("register.html", msg=msg)
 
@@ -105,11 +105,11 @@ def login():
         if account is not None:
             # Logs the user in
             session["user_id"] = account["user_id"]
-            session["first_name"] = account["first_name"]
-            session["last_name"] = account["last_name"]
             session["username"] = username
             session["password"] = password
             session["email"] = account["email"]
+            session["first_name"] = account["first_name"]
+            session["last_name"] = account["last_name"]
 
             return redirect(url_for("home"))
         else:
@@ -117,11 +117,11 @@ def login():
 
     # Logs the user out
     session.pop("user_id", None)
-    session.pop("first_name", None)
-    session.pop("last_name", None)
     session.pop("username", None)
     session.pop("password", None)
     session.pop("email", None)
+    session.pop("first_name", None)
+    session.pop("last_name", None)
 
     return render_template("login.html", msg=msg)
 
@@ -137,7 +137,7 @@ def home():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     if request.method == "POST":
-        if request.form['submit'] == "create":
+        if request.form["submit"] == "create":
             task_list_name = request.form["task-list-name"]
             cursor.execute("INSERT INTO task_list (name) VALUES (%s)", (task_list_name,))
             mysql.connection.commit()
@@ -150,8 +150,10 @@ def home():
 
             cursor.execute("INSERT INTO parent (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
             mysql.connection.commit()
-        elif request.form["submit"] == "view":
-            print("Viewing task list with ID " + request.form["task-list-id"])
+        elif request.form["submit"] == "view" and "task-list-id" in request.form:
+            task_list_id = request.form["task-list-id"]
+
+            return redirect(url_for("tasklist", task_list_id=task_list_id))
 
     task_list_ids = set()
     user_id = session["user_id"]
@@ -177,6 +179,26 @@ def home():
 
     return render_template("home.html", pairs=pairs)
 
+
+# TASKLIST VIEW FUNCTION
+@app.route("/tasklist/<int:task_list_id>", methods=["GET", "POST"])
+def tasklist(task_list_id):
+    """
+    Renders the tasklist page for get and post requests
+    :return: render_template for the next page
+    """
+
+    if request.method == "POST":
+        if request.form["submit"] == "create":
+            print("Creating Task for Task List with ID " + str(task_list_id))
+    
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM task_list WHERE task_list_id = %s", (task_list_id,))
+    task_list = cursor.fetchone()
+    
+    task_list_name = task_list["name"]
+
+    return render_template("tasklist.html", task_list_id=task_list_id, task_list_name=task_list_name)
 
 # EXECUTION
 if __name__ == "__main__":
