@@ -16,13 +16,16 @@ app.config["MYSQL_PASSWORD"] = "mysql"
 app.config["MYSQL_DB"] = "chores_tasks"
 app.secret_key = "secretKey"
 
+
 # INDEX VIEW FUNCTION
 @app.route("/")
 def index():
     """
     :return: render_template of the next page
     """
+
     return redirect(url_for("login"))
+
 
 # REGISTER VIEW FUNCTION
 @app.route("/register", methods=["GET", "POST"])
@@ -32,35 +35,42 @@ def register():
     Displays a message when the registration is invalid
     :return: render_template for the next page
     """
-    
+
     msg = "Nothing to report."
-    
+
     if request.method == "POST" and "first-name" in request.form and "last-name" in request.form and "username" in request.form and "password" in request.form and "email" in request.form:
-        first_name = request.form["first-name"]
-        last_name = request.form["last-name"]
         username = request.form["username"]
-        password = request.form["password"]
-        email = request.form["email"]
-        
+
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
         account = cursor.fetchone()
-        
+
         if account is None:
-            cursor.execute("INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)", (username, password, email, first_name, last_name,))
+            password = request.form["password"]
+            email = request.form["email"]
+            first_name = request.form["first-name"]
+            last_name = request.form["last-name"]
+
+            cursor.execute(
+                "INSERT INTO user (username, password, email, first_name, last_name) VALUES (%s, %s, %s, %s, %s)",
+                (username, password, email, first_name, last_name,))
             mysql.connection.commit()
-            
+
+            cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
+            account = cursor.fetchone()
+
+            # Logs the user in
             session["user_id"] = account["user_id"]
             session["first_name"] = first_name
             session["last_name"] = last_name
             session["username"] = username
             session["password"] = password
             session["email"] = email
-            
+
             return redirect(url_for("home"))
         else:
             msg = "Username already taken."
-    
+
     # Logs the user out
     session.pop("user_id", None)
     session.pop("first_name", None)
@@ -68,8 +78,9 @@ def register():
     session.pop("username", None)
     session.pop("password", None)
     session.pop("email", None)
-    
+
     return render_template("register.html", msg=msg)
+
 
 # LOGIN VIEW FUNCTION
 @app.route("/login", methods=["GET", "POST"])
@@ -79,17 +90,17 @@ def login():
     Displays a message when the login is invalid
     :return: render_template for the next page
     """
-    
+
     msg = "Nothing to report."
-    
+
     if request.method == "POST" and "username" in request.form and "password" in request.form:
         username = request.form["username"]
         password = request.form["password"]
-        
+
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("SELECT * FROM user WHERE username = %s AND password = %s", (username, password,))
         account = cursor.fetchone()
-        
+
         if account is not None:
             # Logs the user in
             session["user_id"] = account["user_id"]
@@ -98,11 +109,11 @@ def login():
             session["username"] = username
             session["password"] = password
             session["email"] = account["email"]
-            
+
             return redirect(url_for("home"))
         else:
             msg = "Incorrect login details."
-    
+
     # Logs the user out
     session.pop("user_id", None)
     session.pop("first_name", None)
@@ -110,33 +121,65 @@ def login():
     session.pop("username", None)
     session.pop("password", None)
     session.pop("email", None)
-    
+
     return render_template("login.html", msg=msg)
 
+
 # HOME VIEW FUNCTION
-@app.route("/home", methods = ["GET", "POST"])
+@app.route("/home", methods=["GET", "POST"])
 def home():
     """
     Renders the home page for get and post requests
     :return: render_template for the next page
     """
-    print(session["user_id"])
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
     if request.method == "POST":
         if request.form['submit'] == "create":
-            print("Creating task list with name " + request.form["task-list-name"])
+            task_list_name = request.form["task-list-name"]
+            cursor.execute("INSERT INTO task_list (name) VALUES (%s)", (task_list_name,))
+            mysql.connection.commit()
+
+            cursor.execute("SELECT * FROM task_list ORDER BY task_list_id DESC")
+            task_list = cursor.fetchone()
+            task_list_id = task_list["task_list_id"]
+
+            user_id = session["user_id"]
+
+            cursor.execute("INSERT INTO parent (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
+            mysql.connection.commit()
         elif request.form["submit"] == "view":
-            print("Viewing task list with ID " + request.form["task-list"])
-    
-    # The database should be queried to generate this dictionary
-    # The key is the task lists name and the value is the id of the task list
-    lists = {
-        "Brian's Task List": 0,
-        "Courtney's Task List": 1,
-        "The Mega Awesome List": 2
-    }
-    
-    return render_template("home.html", lists=lists)
+            print("Viewing task list with ID " + request.form["task-list-id"])
+
+    task_list_ids = set()
+    user_id = session["user_id"]
+
+    cursor.execute("SELECT * FROM parent WHERE user_id = %s", (user_id,))
+
+    # print(str(type(cursor.fetchone()))) cursor.fetchone() returns a dict
+    # print(str(type(cursor.fetchall()))) cursor.fetchone() returns a tuple of dicts
+
+    for parent_association in cursor.fetchall():
+        task_list_ids.add(tuple([parent_association["task_list_id"]]))
+
+    pairs = {}
+
+    if (len(task_list_ids) >= 1):
+        query = "SELECT * FROM task_list WHERE task_list_id = " + str(list(task_list_ids)[0][0])
+
+        for i in range(1, len(task_list_ids)):
+            query += " OR task_list_id = " + str(list(task_list_ids)[i][0])
+
+        cursor.execute(query)
+        task_lists = cursor.fetchall()
+
+        for task_list in task_lists:
+            pairs[task_list["name"]] = task_list["task_list_id"]
+
+    return render_template("home.html", pairs=pairs)
+
 
 # EXECUTION
 if __name__ == "__main__":
-    app.run(debug=True) # Setting debug to true tells flask to immediately apply changes in the code
+    app.run(debug=True)  # Setting debug to true tells flask to immediately apply changes in the code
