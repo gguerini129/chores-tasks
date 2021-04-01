@@ -1,20 +1,3 @@
-tr:nth-child(odd) {
-    background-color: beige;
-}
-
-tr:nth-child(even) {
-    background-color: bisque;
-}
-
-tr:first-child {
-    background-color: lemonchiffon;
-}
-
-table {
-    margin-left: auto;
-    margin-right: auto;
-}
-
 html, body {
     box-sizing: border-box;
 }
@@ -25,15 +8,13 @@ html, body {
     box-sizing: inherit;
 }
 
-html {
-    height: 100%;
-}
-
 body {
     font-family: Garamond, serif;
     background-image: url("desk.png");
     background-size: 100% 100%;
-    min-height: 100%;
+    background-attachment: fixed;
+    padding-top: 1%;
+    padding-bottom: 1%;
     margin: 0;
 }
 
@@ -42,7 +23,7 @@ input, textarea, select, button {
     font-size: inherit;
 }
 
-header h1 {
+header > h1 {
     text-align: center;
 }
 
@@ -58,7 +39,6 @@ p {
     border-color: white;
     max-width: 600px;
     padding: 0.5%;
-    margin-top: 1%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -74,13 +54,10 @@ p {
     margin-top: 0.5%;
 }
 
-.nav-list {
+nav {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    list-style: none;
-    padding: 0%;
-    margin: 0%;
 }
 
 .form-grid {
@@ -100,4 +77,28 @@ p {
 
 .form-grid + .submit {
     margin-top: 1%;
+}
+
+table.task-list {
+    border-style: outset;
+    border-width: 1px;
+    border-spacing: 0;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Can't get it to only target tr's that are the direct child */
+table.task-list tr:nth-of-type(odd) {
+    background-color: beige;
+}
+
+/* Can't get it to only target tr's that are the direct child */
+table.task-list tr:nth-of-type(even) {
+    background-color: bisque;
+}
+
+table.task-list th, table.task-list td {
+    border-style: inset;
+    border-width: 1px;
 }

@@ -4,11 +4,11 @@
     <h1>Task List: {{task_list_name}}</h1>
 {% endblock %}
 {% block nav %}
-    <li><a href="{{ url_for('home') }}">Back</a></li>
+    <a href="{{ url_for('home') }}">Back</a>
 {% endblock %}
 {% block main %}
     {% if tasks %}
-        <table>
+        <table class="task-list">
             <tr>
                 <th>Name</th>
                 <th>Description</th>
@@ -33,16 +33,18 @@
         </div>
         <button class="submit" name="submit" value="create">Create Task</button>
     </form>
-    <hr />
-    <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
-        <div class="form-grid">
-            <label for="tasks">Tasks:</label>
-            <select id="tasks" name="task-id" required="">
-                {% for task in tasks %}
-                    <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button class="submit" name="submit" value="delete">Delete Task</button>
-    </form>
+    {% if tasks %}
+        <hr />
+        <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
+            <div class="form-grid">
+                <label for="tasks">Tasks:</label>
+                <select id="tasks" name="task-id" required="">
+                    {% for task in tasks %}
+                        <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="submit" name="submit" value="delete">Delete Task</button>
+        </form>
+    {% endif %}
 {% endblock %}

@@ -4,8 +4,8 @@
     <h1>Registration</h1>
 {% endblock %}
 {% block nav %}
-    <li><a href="{{ url_for('login') }}">Log In</a></li>
-    <li>Register</li>
+    <a href="{{ url_for('login') }}">Log In</a>
+    Register
 {% endblock %}
 {% block main %}
     <form action="{{ url_for('register') }}" method="post">
