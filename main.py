@@ -188,17 +188,36 @@ def tasklist(task_list_id):
     :return: render_template for the next page
     """
 
-    if request.method == "POST":
-        if request.form["submit"] == "create":
-            print("Creating Task for Task List with ID " + str(task_list_id))
-    
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    if request.method == "POST":
+        if request.form["submit"] == "create" and "task-name" in request.form:
+            user_id = session["user_id"]
+            task_name = request.form["task-name"]
+            
+            if "task-description" not in request.form:
+                cursor.execute("INSERT INTO task (name, user_id, task_list_id) VALUES (%s, %s, %s)", (task_name, user_id, task_list_id,))
+            else:
+                task_description = request.form["task-description"]
+                cursor.execute("INSERT INTO task (name, description, user_id, task_list_id) VALUES (%s, %s, %s, %s)", (task_name, task_description, user_id, task_list_id,))
+        elif request.form["submit"] == "delete" and "task-id" in request.form:
+            task_id = request.form["task-id"]
+            
+            cursor.execute("DELETE FROM task WHERE task_id = %s", (task_id,))
+        
+        cursor.connection.commit()
+    
     cursor.execute("SELECT * FROM task_list WHERE task_list_id = %s", (task_list_id,))
     task_list = cursor.fetchone()
     
     task_list_name = task_list["name"]
+    
+    user_id = session["user_id"]
+    
+    cursor.execute("SELECT * FROM task WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+    tasks = cursor.fetchall()
 
-    return render_template("tasklist.html", task_list_id=task_list_id, task_list_name=task_list_name)
+    return render_template("tasklist.html", task_list_id=task_list_id, task_list_name=task_list_name, tasks=tasks)
 
 # EXECUTION
 if __name__ == "__main__":

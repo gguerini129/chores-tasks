@@ -26,7 +26,7 @@ CREATE TABLE parent (
 
 CREATE TABLE child (
   child_id int(16) NOT NULL AUTO_INCREMENT,
-  points_earned int(16) NOT NULL,
+  -- points_earned int(16) NOT NULL DEFAULT 0,
   user_id int(16) NOT NULL,
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (child_id),
@@ -45,9 +45,10 @@ CREATE TABLE guardian (
 
 CREATE TABLE task (
   task_id int(16) NOT NULL AUTO_INCREMENT,
-  name varchar(32) NOT NULL,
-  description varchar(256) NOT NULL,
-  points_needed int(16) NOT NULL,
+  name varchar(64) NOT NULL,
+  description varchar(256),
+  marked tinyint(1) NOT NULL DEFAULT 0,
+  -- points_applied int(16) NOT NULL DEFAULT 0,
   user_id int(16) NOT NULL,
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (task_id),
@@ -55,14 +56,14 @@ CREATE TABLE task (
   FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
 ) AUTO_INCREMENT=1;
 
-CREATE TABLE wish (
-  wish_id int(16) NOT NULL AUTO_INCREMENT,
-  name varchar(32) NOT NULL,
-  description varchar(256) NOT NULL,
-  points_needed int(16) NOT NULL,
-  user_id int(16) NOT NULL,
-  task_list_id int(16) NOT NULL,
-  PRIMARY KEY (wish_id),
-  FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
-) AUTO_INCREMENT=1;
+-- CREATE TABLE wish (
+  -- wish_id int(16) NOT NULL AUTO_INCREMENT,
+  -- name varchar(64) NOT NULL,
+  -- description varchar(256) NOT NULL,
+  -- points_needed int(16) NOT NULL DEFAULT 0,
+  -- user_id int(16) NOT NULL,
+  -- task_list_id int(16) NOT NULL,
+  -- PRIMARY KEY (wish_id),
+  -- FOREIGN KEY (user_id) REFERENCES user(user_id),
+  -- FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
+-- ) AUTO_INCREMENT=1;
