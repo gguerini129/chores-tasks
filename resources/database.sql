@@ -21,7 +21,7 @@ CREATE TABLE parent (
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (parent_id),
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
+  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
 ) AUTO_INCREMENT=1;
 
 CREATE TABLE child (
@@ -31,7 +31,7 @@ CREATE TABLE child (
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (child_id),
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
+  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
 ) AUTO_INCREMENT=1;
 
 CREATE TABLE guardian (
@@ -40,7 +40,7 @@ CREATE TABLE guardian (
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (guardian_id),
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
+  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
 ) AUTO_INCREMENT=1;
 
 CREATE TABLE task (
@@ -53,7 +53,7 @@ CREATE TABLE task (
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (task_id),
   FOREIGN KEY (user_id) REFERENCES user(user_id),
-  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
+  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
 ) AUTO_INCREMENT=1;
 
 -- CREATE TABLE wish (

@@ -48,6 +48,10 @@ header.plate {
     margin-top: 0;
 }
 
+.warning.plate {
+    background-color: mistyrose;
+}
+
 p.plate {
     margin-bottom: 0;
     margin-left: 0;

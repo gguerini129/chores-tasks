@@ -11,6 +11,11 @@
         <a href="{{ url_for('login') }}">Log In</a>
         <a href="{{ url_for('register') }}">Register</a>
     </nav>
+    {% if msg %}
+    <p class="warning plate">
+        {{ msg }}
+    </p>
+    {% endif %}
     <form class="plate" action="{{ url_for('register') }}" method="post">
         <div class="fields">
             <label for="first-name">First Name:</label>
@@ -28,9 +33,4 @@
             <button class="larger">Register</button>
         </div>
     </form>
-    {% if msg %}
-    <p class="plate">
-        {{ msg }}
-    </p>
-    {% endif %}
 {% endblock %}

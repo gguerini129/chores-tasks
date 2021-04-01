@@ -134,6 +134,7 @@ def home():
     :return: render_template for the next page
     """
 
+    msg = "";
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     if request.method == "POST":
@@ -149,35 +150,95 @@ def home():
             user_id = session["user_id"]
 
             cursor.execute("INSERT INTO parent (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
-            mysql.connection.commit()
         elif request.form["submit"] == "view" and "task-list-id" in request.form:
             task_list_id = request.form["task-list-id"]
 
             return redirect(url_for("tasklist", task_list_id=task_list_id))
+        elif request.form["submit"] == "delete" and "task-list-id" in request.form:
+            task_list_id = request.form["task-list-id"]
+            
+            cursor.execute("DELETE FROM task_list WHERE task_list_id = %s", (task_list_id,))
+        elif request.form["submit"] == "share" and "task-list-id" in request.form and "user-type" in request.form and "username" in request.form:
+            task_list_id = request.form["task-list-id"]
+            user_type = request.form["user-type"]
+            username = request.form["username"]
+            
+            cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
+            account = cursor.fetchone()
+            
+            if account:
+                user_id = account["user_id"]
+                
+                cursor.execute("SELECT * FROM parent WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+                parent_association = cursor.fetchone()
+                cursor.execute("SELECT * FROM child WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+                child_association = cursor.fetchone()
+                cursor.execute("SELECT * FROM guardian WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+                guardian_association = cursor.fetchone()
+                
+                if parent_association or child_association or guardian_association:
+                    msg = "User already defined in task list."
+                else:
+                    if user_type == "parent":
+                        cursor.execute("INSERT INTO parent (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
+                    elif user_type == "child":
+                        cursor.execute("INSERT INTO child (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
+                    elif user_type == "guardian":
+                        cursor.execute("INSERT INTO guardian (user_id, task_list_id) VALUES (%s, %s)", (user_id, task_list_id,))
+            else:
+                msg = "Account not found."
 
-    task_list_ids = set()
+        mysql.connection.commit()
+
+    view_task_list_ids = set()
+    delete_task_list_ids = set()
     user_id = session["user_id"]
 
     cursor.execute("SELECT * FROM parent WHERE user_id = %s", (user_id,))
 
     for parent_association in cursor.fetchall():
-        task_list_ids.add(tuple([parent_association["task_list_id"]]))
+        view_task_list_ids.add(tuple([parent_association["task_list_id"]]))
+        delete_task_list_ids.add(tuple([parent_association["task_list_id"]]))
+    
+    cursor.execute("SELECT * FROM child WHERE user_id = %s", (user_id,))
+    
+    for child_association in cursor.fetchall():
+        view_task_list_ids.add(tuple([child_association["task_list_id"]]))
+    
+    cursor.execute("SELECT * FROM guardian WHERE user_id = %s", (user_id,))
+    
+    for guardian_association in cursor.fetchall():
+        view_task_list_ids.add(tuple([guardian_association["task_list_id"]]))
 
-    pairs = {}
+    view_pairs = {}
 
-    if len(task_list_ids) >= 1:
-        query = "SELECT * FROM task_list WHERE task_list_id = " + str(list(task_list_ids)[0][0])
+    if len(view_task_list_ids) >= 1:
+        query = "SELECT * FROM task_list WHERE task_list_id = " + str(list(view_task_list_ids)[0][0])
 
-        for i in range(1, len(task_list_ids)):
-            query += " OR task_list_id = " + str(list(task_list_ids)[i][0])
+        for i in range(1, len(view_task_list_ids)):
+            query += " OR task_list_id = " + str(list(view_task_list_ids)[i][0])
 
         cursor.execute(query)
         task_lists = cursor.fetchall()
 
         for task_list in task_lists:
-            pairs[task_list["name"]] = task_list["task_list_id"]
+            view_pairs[task_list["name"]] = task_list["task_list_id"]
+    
+    delete_pairs = {}
 
-    return render_template("home.html", pairs=pairs)
+    if len(delete_task_list_ids) >= 1:
+        query = "SELECT * FROM task_list WHERE task_list_id = " + str(list(delete_task_list_ids)[0][0])
+
+        for i in range(1, len(delete_task_list_ids)):
+            query += " OR task_list_id = " + str(list(delete_task_list_ids)[i][0])
+
+        cursor.execute(query)
+        task_lists = cursor.fetchall()
+
+        for task_list in task_lists:
+            delete_pairs[task_list["name"]] = task_list["task_list_id"]
+
+    return render_template("home.html", msg=msg, delete_pairs=delete_pairs, view_pairs=view_pairs)
 
 
 # TASKLIST VIEW FUNCTION
@@ -202,7 +263,7 @@ def tasklist(task_list_id):
                 cursor.execute("INSERT INTO task (name, description, user_id, task_list_id) VALUES (%s, %s, %s, %s)", (task_name, task_description, user_id, task_list_id,))
         elif request.form["submit"] == "delete" and "task-id" in request.form:
             task_id = request.form["task-id"]
-            
+
             cursor.execute("DELETE FROM task WHERE task_id = %s", (task_id,))
         
         cursor.connection.commit()
@@ -214,10 +275,26 @@ def tasklist(task_list_id):
     
     user_id = session["user_id"]
     
-    cursor.execute("SELECT * FROM task WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+    # USER TYPE
+    user_type = "parent"
+    
+    cursor.execute("SELECT * FROM child WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+    child_association = cursor.fetchone()
+    
+    if child_association:
+        user_type = "child"
+    
+    cursor.execute("SELECT * FROM guardian WHERE user_id = %s AND task_list_id = %s", (user_id, task_list_id,))
+    guardian_association = cursor.fetchone()
+    
+    if guardian_association:
+        user_type = "guardian"
+    
+    # TASKS
+    cursor.execute("SELECT * FROM task WHERE task_list_id = %s", (task_list_id,))
     tasks = cursor.fetchall()
 
-    return render_template("tasklist.html", task_list_id=task_list_id, task_list_name=task_list_name, tasks=tasks)
+    return render_template("tasklist.html", task_list_id=task_list_id, task_list_name=task_list_name, user_type=user_type, tasks=tasks)
 
 # EXECUTION
 if __name__ == "__main__":
