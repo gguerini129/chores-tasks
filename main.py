@@ -39,7 +39,7 @@ def register():
     :return: render_template for the next page
     """
 
-    msg = "Nothing to report."
+    msg = ""
 
     if request.method == "POST" and "username" in request.form and "password" in request.form and "email" in request.form and "first-name" in request.form and "last-name" in request.form:
         username = request.form["username"]
@@ -92,7 +92,7 @@ def login():
     :return: render_template for the next page
     """
 
-    msg = "Nothing to report."
+    msg = ""
 
     if request.method == "POST" and "username" in request.form and "password" in request.form:
         username = request.form["username"]

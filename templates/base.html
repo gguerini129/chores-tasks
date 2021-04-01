@@ -5,21 +5,20 @@
     <title>Chores & Tasks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 </head>
-<body><div class="container">
-    <header class="plate">
-        {% block header %}
-            <h1>Chores % Tasks</h1>
-        {% endblock header %}
-    </header>
-    <nav class="plate">
-        {% block nav %}
-            <li>Overwrite the nav block.</li>
-        {% endblock %}
-    </nav>
-    <main class="plate">
-        {% block main %}
-            <p>Overwrite the main block.</p>
-        {% endblock %}
-    </main>
-</div></body>
+<body>
+    <div class="container">
+        <header class="plate">
+            {% block header_plate %}
+                <h1>Chores & Tasks</h1>
+            {% endblock %}
+        </header>
+        <main>
+            {% block main %}
+                <div class="plate">
+                    <p>Overwrite the main block.</p>
+                </div>
+            {% endblock %}
+        </main>
+    </div>
+</body>
 </html>

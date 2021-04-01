@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 
-{% block header %}
+<!-- Header Plate -->
+{% block header_plate %}
     <h1>Registration</h1>
 {% endblock %}
-{% block nav %}
-    <a href="{{ url_for('login') }}">Log In</a>
-    Register
-{% endblock %}
+
+<!-- Main -->
 {% block main %}
-    <form action="{{ url_for('register') }}" method="post">
-        <div class="form-grid">
+    <nav class="plate">
+        <a href="{{ url_for('login') }}">Log In</a>
+        <a href="{{ url_for('register') }}">Register</a>
+    </nav>
+    <form class="plate" action="{{ url_for('register') }}" method="post">
+        <div class="fields">
             <label for="first-name">First Name:</label>
             <input type="text" id="first-name" name="first-name" maxlength="32" required="" />
             <label for="last-name">Last Name:</label>
@@ -21,8 +24,13 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" maxlength="64" required="" />
         </div>
-        <button class="submit">Register</button>
+        <div class="actions">
+            <button class="larger">Register</button>
+        </div>
     </form>
-    <hr />
-    <p>{{ msg }}</p>
+    {% if msg %}
+    <p class="plate">
+        {{ msg }}
+    </p>
+    {% endif %}
 {% endblock %}

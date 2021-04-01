@@ -1,24 +1,27 @@
 {% extends "base.html" %}
 
-{% block header %}
+<!-- Header Plate -->
+{% block header_plate %}
     <h1>Home</h1>
 {% endblock %}
-{% block nav %}
-    <a href="{{ url_for('login') }}">Log Out</a>
-{% endblock %}
+
+<!-- Main -->
 {% block main %}
-    <p>Hi {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
-    <hr />
-    <form action="{{ url_for('home') }}" method="post">
-        <div class="form-grid">
+    <nav class="plate">
+        <a href="{{ url_for('login') }}">Log Out</a>
+    </nav>
+    <p class="plate">Hi {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
+    <form class="plate" action="{{ url_for('home') }}" method="post">
+        <div class="fields">
             <label for="name">Enter Name:</label>
             <input type="text" id="name" name="task-list-name" maxlength="32" required="" />
         </div>
-        <button class="submit" name="submit" value="create">Create Task List</button>
+        <div class="actions">
+            <button class="larger" name="submit" value="create">Create Task List</button>
+        </div>
     </form>
-    <hr />
-    <form action="{{ url_for('home') }}" method="post">
-        <div class="form-grid">
+    <form class="plate" action="{{ url_for('home') }}" method="post">
+        <div class="fields">
             <label for="task-lists">Task Lists:</label>
             <select id="task-lists" name="task-list-id" required="">
                 {% for name, id in pairs.items() %}
@@ -26,6 +29,8 @@
                 {% endfor %}
             </select>
         </div>
-        <button class="submit" name="submit" value="view">View Task List</button>
+        <div class="actions">
+            <button class="larger" name="submit" value="view">View Task List</button>
+        </div>
     </form>
 {% endblock %}

@@ -1,29 +1,31 @@
 {% extends "base.html" %}
 
-{% block header %}
+<!-- Header Plate -->
+{% block header_plate %}
     <h1>Task List: {{task_list_name}}</h1>
 {% endblock %}
-{% block nav %}
-    <a href="{{ url_for('home') }}">Back</a>
-{% endblock %}
+
+<!-- Main -->
 {% block main %}
+    <nav class="plate">
+        <a href="{{ url_for('home') }}">Back</a>
+    </nav>
     {% if tasks %}
-        <table class="task-list">
+    <table class="task-list plate">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        {% for task in tasks %}
             <tr>
-                <th>Name</th>
-                <th>Description</th>
+                <td>{{ task["name"] }}</td>
+                <td>{{ task["description"] }}</td>
             </tr>
-            {% for task in tasks %}
-                <tr>
-                    <td>{{ task["name"] }}</td>
-                    <td>{{ task["description"] }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <hr />
+        {% endfor %}
+    </table>
     {% endif %}
-    <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
-        <div class="form-grid">
+    <form class="plate" action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
+        <div class="fields">
             <label for="task-name">Enter Name:</label>
             <input type="text" id="task-name" name="task-name" maxlength="64" required="" />
             <label for="task-description">Enter Description:</label>
@@ -31,20 +33,23 @@
             <label for="date-time-due">Enter Date-Time Due:</label>
             <input type="datetime-local" id="date-time-due" name="task-date-time-due" disabled="" />
         </div>
-        <button class="submit" name="submit" value="create">Create Task</button>
+        <div class="actions">
+            <button class="larger" name="submit" value="create">Create Task</button>
+        </div>
     </form>
     {% if tasks %}
-        <hr />
-        <form action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
-            <div class="form-grid">
-                <label for="tasks">Tasks:</label>
-                <select id="tasks" name="task-id" required="">
-                    {% for task in tasks %}
-                        <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button class="submit" name="submit" value="delete">Delete Task</button>
-        </form>
+    <form class="plate" action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
+        <div class="fields">
+            <label for="tasks">Tasks:</label>
+            <select id="tasks" name="task-id" required="">
+                {% for task in tasks %}
+                    <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="actions">
+            <button class="larger" name="submit" value="delete">Delete Task</button>
+        </div>
+    </form>
     {% endif %}
 {% endblock %}

@@ -23,59 +23,71 @@ input, textarea, select, button {
     font-size: inherit;
 }
 
-header > h1 {
-    text-align: center;
-}
-
-p {
-    text-align: center;
-    margin: 0;
-}
-
 .container {
     background-color: rgba(255, 255, 255, 0.5);
     border-style: solid;
-    border-width: 2px;
-    border-color: white;
-    max-width: 600px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.6);
+    max-width: 500px;
     padding: 0.5%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .plate {
+    text-align: center;
     background-color: white;
     border-style: outset;
     border-width: 1px;
+    margin-top: 0.5%;
     padding: 1%;
 }
 
-.plate:not(:first-child) {
-    margin-top: 0.5%;
+header.plate {
+    background-color: ghostwhite;
+    margin-top: 0;
 }
 
-nav {
+p.plate {
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+nav.plate {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+nav.plate > a {
+    flex: 1;
+    padding-bottom: 0.75%;
+    padding-top: 0.75%;
+}
+
+nav.plate > a:hover {
+    background-color: rgba(127, 127, 127, 0.1);
+}
+
+form > .fields {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    align-items: center;
+}
+
+form > .actions {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: 30% 70%;
-    /* grid-gap: 2%; Doesn't work )-: perhaps set parent height */
-    align-items: center;
-}
-
-.submit {
-    display: block;
+button.larger {
     padding-bottom: 1%;
     padding-top: 1%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-.form-grid + .submit {
+.fields + .actions {
     margin-top: 1%;
 }
 
