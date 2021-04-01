@@ -27,7 +27,7 @@
     <form class="plate" action="{{ url_for('tasklist', task_list_id=task_list_id) }}" method="post">
         <div class="fields">
             <label for="task-name">Enter Name:</label>
-            <input type="text" id="task-name" name="task-name" maxlength="64" required="" />
+            <input type="text" id="task-name" name="task-name" maxlength="32" required="" />
             <label for="task-description">Enter Description:</label>
             <textarea style="resize: none;" id="task-description" name="task-description" maxlength="256"></textarea>
             <label for="date-time-due">Enter Date-Time Due:</label>

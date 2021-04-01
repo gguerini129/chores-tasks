@@ -45,9 +45,9 @@ CREATE TABLE guardian (
 
 CREATE TABLE task (
   task_id int(16) NOT NULL AUTO_INCREMENT,
-  name varchar(64) NOT NULL,
+  name varchar(32) NOT NULL,
   description varchar(256),
-  marked tinyint(1) NOT NULL DEFAULT 0,
+  -- marked tinyint(1) NOT NULL DEFAULT 0,
   -- points_applied int(16) NOT NULL DEFAULT 0,
   user_id int(16) NOT NULL,
   task_list_id int(16) NOT NULL,
