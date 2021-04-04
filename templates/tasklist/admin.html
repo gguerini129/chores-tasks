@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+<!-- Header Plate -->
+{% block header_plate %}
+    <h1>Task List: {{ task_list["name"] }}</h1>
+{% endblock %}
+
+<!-- Main -->
+{% block main %}
+    <nav class="plate">
+        <a href="{{ url_for('home') }}">Back</a>
+        <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
+        <a href="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}">Admin</a>
+    </nav>
+    {% if error %}
+        <p class="warning plate">
+            {{ error }}
+        </p>
+    {% endif %}
+    <form class="plate" action="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}" method="post">
+        <div class="fields">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" maxlength="32" required="" />
+            <label for="user-type">User Type:</label>
+            <select id="user-type" name="user-type" required="">
+                <option value="parent">Parent</option>
+                <option value="child">Student</option>
+                <option value="guardian">Teacher</option>
+            </select>
+        </div>
+        <div class="actions">
+            <button class="larger" name="submit" value="share">Share</button>
+        </div>
+    </form>
+    <form class="plate" action="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}" method="post">
+        <div class="actions">
+            <button class="larger" name="submit" value="delete">Delete</button>
+        </div>
+    </form>
+{% endblock %}

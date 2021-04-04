@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+<!-- Header Plate -->
+{% block header_plate %}
+    <h1>Task List: {{ task_list["name"] }}</h1>
+{% endblock %}
+
+<!-- Main -->
+{% block main %}
+    <nav class="plate">
+        <a href="{{ url_for('home') }}">Back</a>
+        {% if user_type == "parent" %}
+            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
+            <a href="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}">Admin</a>
+        {% endif %}
+    </nav>
+    <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
+        <div class="fields">
+            <label for="task-name">Enter Name:</label>
+            <input type="text" id="task-name" name="name" maxlength="32" required="" />
+            <label for="task-description">Enter Description:</label>
+            <textarea style="resize: none;" id="task-description" name="description" maxlength="256"></textarea>
+            <!-- <label for="date-time-due">Enter Date-Time Due:</label> -->
+            <!-- <input type="datetime-local" id="date-time-due" name="task-date-time-due" disabled="" /> -->
+        </div>
+        <div class="actions">
+            <button class="larger" name="submit" value="create">Create Task</button>
+        </div>
+    </form>
+    {% if deletable_tasks %}
+        <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
+            <div class="fields">
+                <label for="tasks">Tasks:</label>
+                <select id="tasks" name="id" required="">
+                    {% for task in deletable_tasks %}
+                        <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="actions">
+                <button class="larger" name="submit" value="delete">Delete Task</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if tasks %}
+        <table class="task-list plate">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task["name"] }}</td>
+                    <td>{{ task["description"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

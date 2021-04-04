@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 <!-- Header Plate -->
 {% block header_plate %}
@@ -9,11 +9,11 @@
 {% block main %}
     <nav class="plate">
         <a href="{{ url_for('login') }}">Log In</a>
-        <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('registration') }}">Register</a>
     </nav>
-    {% if msg %}
+    {% if error %}
     <p class="warning plate">
-        {{ msg }}
+        {{ error }}
     </p>
     {% endif %}
     <form class="plate" action="{{ url_for('login') }}" method="post">

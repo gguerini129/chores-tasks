@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 <!-- Header Plate -->
 {% block header_plate %}
-    <h1>Task List Settings</h1>
+    <h1>Task List Selection</h1>
 {% endblock %}
 
 <!-- Main -->
@@ -10,18 +10,15 @@
     <nav class="plate">
         <a href="{{ url_for('login') }}">Log Out</a>
     </nav>
-    {% if msg %}
-    <p class="warning plate">
-        {{ msg }}
+    <p class="plate">
+        Hello, {{ session.first_name }} {{ session.last_name }}. Your username is "{{ session.username }}" and your email is "{{ session.email }}".
     </p>
-    {% endif %}
-    <p class="plate">Hi {{ session.first_name }} {{ session.last_name }}, your username is {{ session.username }} and your email is {{ session.email }}.</p>
     <form class="plate" action="{{ url_for('home') }}" method="post">
         <div class="fields">
-            <label for="task-lists">Task List:</label>
-            <select id="task-lists" name="task-list-id" required="">
-                {% for name, id in view_pairs.items() %}
-                    <option value="{{ id }}">{{ name }}</option>
+            <label for="available-task-lists">Task List:</label>
+            <select id="available-task-lists" name="id" required="">
+                {% for task_list in task_lists %}
+                    <option value="{{ task_list['task_list_id'] }}">{{ task_list["name"] }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -32,44 +29,10 @@
     <form class="plate" action="{{ url_for('home') }}" method="post">
         <div class="fields">
             <label for="name">Enter Name:</label>
-            <input type="text" id="name" name="task-list-name" maxlength="32" required="" />
+            <input type="text" id="name" name="name" maxlength="32" required="" />
         </div>
         <div class="actions">
             <button class="larger" name="submit" value="create">Create</button>
-        </div>
-    </form>
-    <form class="plate" action="{{ url_for('home') }}" method="post">
-        <div class="fields">
-            <label for="task-lists">Task List:</label>
-            <select id="task-lists" name="task-list-id" required="">
-                {% for name, id in delete_pairs.items() %}
-                    <option value="{{ id }}">{{ name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="actions">
-            <button class="larger" name="submit" value="delete">Delete</button>
-        </div>
-    </form>
-    <form class="plate" action="{{ url_for('home') }}" method="post">
-        <div class="fields">
-            <label for="task-lists">Task List:</label>
-            <select id="task-lists" name="task-list-id" required="">
-                {% for name, id in delete_pairs.items() %}
-                    <option value="{{ id }}">{{ name }}</option>
-                {% endfor %}
-            </select>
-            <label for="user-type">User Type:</label>
-            <select id="user-type" name="user-type" required="">
-                <option value="parent">Parent</option>
-                <option value="child">Student</option>
-                <option value="guardian">Teacher</option>
-            </select>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" maxlength="32" required="" />
-        </div>
-        <div class="actions">
-            <button class="larger" name="submit" value="share">Share</button>
         </div>
     </form>
 {% endblock %}
