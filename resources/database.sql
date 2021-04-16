@@ -26,7 +26,7 @@ CREATE TABLE parent (
 
 CREATE TABLE child (
   child_id int(16) NOT NULL AUTO_INCREMENT,
-  -- points int(16) NOT NULL DEFAULT 0,
+  points int(16) NOT NULL DEFAULT 0,
   user_id int(16) NOT NULL,
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (child_id),
@@ -47,8 +47,8 @@ CREATE TABLE task (
   task_id int(16) NOT NULL AUTO_INCREMENT,
   name varchar(32) NOT NULL,
   description varchar(256),
-  -- marked tinyint(1) NOT NULL DEFAULT 0,
-  -- points int(16) NOT NULL DEFAULT 0,
+  marked tinyint(1) NOT NULL DEFAULT 0,
+  points int(16) NOT NULL DEFAULT 0,
   user_id int(16) NOT NULL,
   task_list_id int(16) NOT NULL,
   PRIMARY KEY (task_id),
@@ -56,14 +56,14 @@ CREATE TABLE task (
   FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
 ) AUTO_INCREMENT=1;
 
--- CREATE TABLE wish (
-  -- wish_id int(16) NOT NULL AUTO_INCREMENT,
-  -- name varchar(64) NOT NULL,
-  -- description varchar(256) NOT NULL,
-  -- points int(16) NOT NULL DEFAULT 0,
-  -- user_id int(16) NOT NULL,
-  -- task_list_id int(16) NOT NULL,
-  -- PRIMARY KEY (wish_id),
-  -- FOREIGN KEY (user_id) REFERENCES user(user_id),
-  -- FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id)
--- ) AUTO_INCREMENT=1;
+CREATE TABLE wish (
+  wish_id int(16) NOT NULL AUTO_INCREMENT,
+  name varchar(64) NOT NULL,
+  description varchar(256) NOT NULL,
+  points int(16) NOT NULL DEFAULT 0,
+  user_id int(16) NOT NULL,
+  task_list_id int(16) NOT NULL,
+  PRIMARY KEY (wish_id),
+  FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (task_list_id) REFERENCES task_list(task_list_id) ON DELETE CASCADE
+) AUTO_INCREMENT=1;

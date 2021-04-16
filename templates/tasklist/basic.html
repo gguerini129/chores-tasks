@@ -2,7 +2,7 @@
 
 <!-- Header Plate -->
 {% block header_plate %}
-    <h1>Task List: {{ task_list["name"] }}</h1>
+    <h1>Basic Settings for {{ task_list["name"] }}</h1>
 {% endblock %}
 
 <!-- Main -->
@@ -10,8 +10,11 @@
     <nav class="plate">
         <a href="{{ url_for('home') }}">Back</a>
         {% if user_type == "parent" %}
-            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
             <a href="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}">Admin</a>
+        {% endif %}
+        {% if user_type == "child" or user_type == "parent" %}
+            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
+            <a href="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}">Wish List</a>
         {% endif %}
     </nav>
     <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">

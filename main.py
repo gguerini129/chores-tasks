@@ -292,7 +292,16 @@ def task_list_admin(task_list_id):
     
     task_list = get_task_list(task_list_id)
     
-    return render_template("tasklist/admin.html", task_list=task_list, error=error)
+    if parent_of(session["user_id"], task_list_id):
+        user_type = "parent"
+    elif child_of(session["user_id"], task_list_id):
+        user_type = "child"
+    elif guardian_of(session["user_id"], task_list_id):
+        user_type = "guardian"
+    else:
+        raise Exception()
+    
+    return render_template("tasklist/admin.html", task_list=task_list, user_type=user_type, error=error)
 
 # HELPER FUNCTIONS FOR ADMIN TASK LIST
 def assigned_to(user_id, task_list_id):
@@ -315,6 +324,27 @@ def delete_task_list(task_list_id):
     cursor.execute("DELETE FROM task_list WHERE task_list_id = %s", (task_list_id,))
     mysql.connection.commit()
     cursor.close()
+
+# VIEW FUNCTION FOR WISH LIST
+@app.route("/tasklist/<int:task_list_id>/wishlist", methods=["GET", "POST"])
+def task_list_wish_list(task_list_id):
+    error = ""
+    
+    if request.method == "POST":
+        form = request.form
+    
+    task_list = get_task_list(task_list_id)
+    
+    if parent_of(session["user_id"], task_list_id):
+        user_type = "parent"
+    elif child_of(session["user_id"], task_list_id):
+        user_type = "child"
+    elif guardian_of(session["user_id"], task_list_id):
+        user_type = "guardian"
+    else:
+        raise Exception()
+    
+    return render_template("tasklist/wishlist.html", task_list=task_list, user_type=user_type)
 
 # EXECUTION
 if __name__ == "__main__":
