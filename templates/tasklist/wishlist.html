@@ -17,46 +17,46 @@
             <a href="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}">Wish List</a>
         {% endif %}
     </nav>
-    <!-- <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post"> -->
-        <!-- <div class="fields"> -->
-            <!-- <label for="task-name">Enter Name:</label> -->
-            <!-- <input type="text" id="task-name" name="name" maxlength="32" required="" /> -->
-            <!-- <label for="task-description">Enter Description:</label> -->
-            <!-- <textarea style="resize: none;" id="task-description" name="description" maxlength="256"></textarea> -->
-            <!-- <label for="date-time-due">Enter Date-Time Due:</label> -->
-            <!-- <input type="datetime-local" id="date-time-due" name="task-date-time-due" disabled="" /> -->
-        <!-- </div> -->
-        <!-- <div class="actions"> -->
-            <!-- <button class="larger" name="submit" value="create">Create Task</button> -->
-        <!-- </div> -->
-    <!-- </form> -->
-    <!-- {% if deletable_tasks %} -->
-        <!-- <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post"> -->
-            <!-- <div class="fields"> -->
-                <!-- <label for="tasks">Tasks:</label> -->
-                <!-- <select id="tasks" name="id" required=""> -->
-                    <!-- {% for task in deletable_tasks %} -->
-                        <!-- <option value="{{ task['task_id'] }}">{{ task["name"] }}</option> -->
-                    <!-- {% endfor %} -->
-                <!-- </select> -->
-            <!-- </div> -->
-            <!-- <div class="actions"> -->
-                <!-- <button class="larger" name="submit" value="delete">Delete Task</button> -->
-            <!-- </div> -->
-        <!-- </form> -->
-    <!-- {% endif %} -->
-    <!-- {% if tasks %} -->
-        <!-- <table class="task-list plate"> -->
-            <!-- <tr> -->
-                <!-- <th>Name</th> -->
-                <!-- <th>Description</th> -->
-            <!-- </tr> -->
-            <!-- {% for task in tasks %} -->
-                <!-- <tr> -->
-                    <!-- <td>{{ task["name"] }}</td> -->
-                    <!-- <td>{{ task["description"] }}</td> -->
-                <!-- </tr> -->
-            <!-- {% endfor %} -->
-        <!-- </table> -->
-    <!-- {% endif %} -->
+    <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
+        <div class="fields">
+            <label for="wish-name">Enter Name:</label>
+            <input type="text" id="wish-name" name="name" maxlength="32" required="" />
+            <label for="wish-description">Enter Description:</label>
+            <textarea style="resize: none;" id="wish-description" name="description" maxlength="256"></textarea>
+        </div>
+        <div class="actions">
+            <button class="larger" name="submit" value="create">Create Wish</button>
+        </div>
+    </form>
+    {% if wishes %}
+        <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
+            <div class="fields">
+                <label for="wishes">Wishes:</label>
+                <select id="wishes" name="id" required="">
+                    {% for wish in wishes %}
+                        <option value="{{ wish['wish_id'] }}">{{ wish["name"] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="actions">
+                <button class="larger" name="submit" value="delete">Delete Wish</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if wishes %}
+        <table class="task-list plate">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Points</th>
+            </tr>
+            {% for wish in wishes %}
+                <tr>
+                    <td>{{ wish["name"] }}</td>
+                    <td>{{ wish["description"] }}</td>
+                    <td>{{ wish["points"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}

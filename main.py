@@ -325,15 +325,26 @@ def delete_task_list(task_list_id):
     mysql.connection.commit()
     cursor.close()
 
-# VIEW FUNCTION FOR WISH LIST
+# VIEW FUNCTION FOR TASK LIST WISH LIST
 @app.route("/tasklist/<int:task_list_id>/wishlist", methods=["GET", "POST"])
 def task_list_wish_list(task_list_id):
     error = ""
     
     if request.method == "POST":
         form = request.form
+        
+        if form["submit"] == "create":
+            if "description" in request.form:
+                add_wish(form["name"], form["description"], session["user_id"], task_list_id)
+            else:
+                add_wish(form["name"], session["user_id"], task_list_id)
+        elif form["submit"] == "delete":
+            delete_wish(form["id"])
+        else:
+            raise Exception()
     
     task_list = get_task_list(task_list_id)
+    wishes = get_wishes(task_list_id)
     
     if parent_of(session["user_id"], task_list_id):
         user_type = "parent"
@@ -344,7 +355,33 @@ def task_list_wish_list(task_list_id):
     else:
         raise Exception()
     
-    return render_template("tasklist/wishlist.html", task_list=task_list, user_type=user_type)
+    return render_template("tasklist/wishlist.html", task_list=task_list, wishes=wishes, user_type=user_type)
+
+# HELPER FUNCTIONS FOR TASK LIST WISH LIST
+def get_wishes(task_list_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM wish WHERE task_list_id = %s", (task_list_id,))
+    wishes = cursor.fetchall()
+    cursor.close()
+    return wishes
+
+def add_wish(name, user_id, task_list_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("INSERT INTO wish (name, user_id, task_list_id) VALUES (%s, %s, %s)", (name, user_id, task_list_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+def add_wish(name, description, user_id, task_list_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("INSERT INTO wish (name, description, user_id, task_list_id) VALUES (%s, %s, %s, %s)", (name, description, user_id, task_list_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_wish(wish_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("DELETE FROM wish WHERE wish_id = %s", (wish_id,))
+    mysql.connection.commit()
+    cursor.close()
 
 # EXECUTION
 if __name__ == "__main__":
