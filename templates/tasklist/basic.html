@@ -21,10 +21,10 @@
     </nav>
     <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
         <div class="fields">
-            <label for="task-name">Enter Name:</label>
-            <input type="text" id="task-name" name="name" maxlength="32" required="" />
-            <label for="task-description">Enter Description:</label>
-            <textarea style="resize: none;" id="task-description" name="description" maxlength="256"></textarea>
+            <label for="c-name">Enter Name:</label>
+            <input type="text" id="c-name" name="name" maxlength="32" required="" />
+            <label for="c-description">Enter Description:</label>
+            <textarea style="resize: none;" id="c-description" name="description" maxlength="256"></textarea>
             <!-- <label for="date-time-due">Enter Date-Time Due:</label> -->
             <!-- <input type="datetime-local" id="date-time-due" name="task-date-time-due" disabled="" /> -->
         </div>
@@ -35,8 +35,8 @@
     {% if deletable_tasks %}
         <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
             <div class="fields">
-                <label for="tasks">Tasks:</label>
-                <select id="tasks" name="id" required="">
+                <label for="d-tasks">Tasks:</label>
+                <select id="d-tasks" name="id" required="">
                     {% for task in deletable_tasks %}
                         <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
                     {% endfor %}
@@ -50,14 +50,14 @@
     {% if user_type == "parent" and tasks %}
         <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
             <div class="fields">
-                <label for="tasks">Tasks:</label>
-                <select id="tasks" name="id" required="">
+                <label for="p-tasks">Tasks:</label>
+                <select id="p-tasks" name="id" required="">
                     {% for task in tasks %}
                         <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
                     {% endfor %}
                 </select>
-                <label for="task-points">Enter Points:</label>
-                <input type="text" id="task-points" name="points" maxlength="2" pattern="^\d+$" autocomplete="off" required="" />
+                <label for="p-points">Enter Points:</label>
+                <input type="text" id="p-points" name="points" maxlength="2" pattern="^\d+$" autocomplete="off" required="" />
             </div>
             <div class="actions">
                 <button class="larger" name="submit" value="modify">Add Points to Task</button>
@@ -67,14 +67,14 @@
     {% if tasks %}
         <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
             <div class="fields">
-                <label for="tasks">Tasks:</label>
-                <select id="tasks" name="id" required="">
+                <label for="m-tasks">Tasks:</label>
+                <select id="m-tasks" name="id" required="">
                     {% for task in tasks %}
                         <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
                     {% endfor %}
                 </select>
-                <label for="task-marked">Select to Mark:</label>
-                <input type="checkbox" id="task-marked" name="marked" value="marked" />
+                <label for="m-marked">Select to Mark:</label>
+                <input type="checkbox" id="m-marked" name="marked" value="marked" />
             </div>
             <div class="actions">
                 <button class="larger" name="submit" value="mark">Mark Task</button>
@@ -87,14 +87,12 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Points</th>
-                <!-- <th>Marked</th> -->
             </tr>
             {% for task in tasks %}
                 <tr {% if task["marked"] == 1 %}class="marked"{% endif %} >
                     <td>{{ task["name"] }}</td>
                     <td>{{ task["description"] }}</td>
                     <td>{{ task["points"] }}</td>
-                    <!-- <td>{{ task["marked"] }}</td> -->
                 </tr>
             {% endfor %}
         </table>

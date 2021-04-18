@@ -19,6 +19,11 @@
             <a href="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}">Wish List</a>
         {% endif %}
     </nav>
+    {% if error %}
+        <p class="warning plate">
+            {{ error }}
+        </p>
+    {% endif %}
     {% if user_type == "child" %}
         <p class="plate">
             You have {{ points }} point(s).
@@ -26,10 +31,10 @@
     {% endif %}
     <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
         <div class="fields">
-            <label for="wish-name">Enter Name:</label>
-            <input type="text" id="wish-name" name="name" maxlength="32" required="" />
-            <label for="wish-description">Enter Description:</label>
-            <textarea style="resize: none;" id="wish-description" name="description" maxlength="256"></textarea>
+            <label for="c-name">Enter Name:</label>
+            <input type="text" id="c-name" name="name" maxlength="32" required="" />
+            <label for="c-description">Enter Description:</label>
+            <textarea style="resize: none;" id="c-description" name="description" maxlength="256"></textarea>
         </div>
         <div class="actions">
             <button class="larger" name="submit" value="create">Create Wish</button>
@@ -38,8 +43,8 @@
     {% if wishes %}
         <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
             <div class="fields">
-                <label for="wishes">Wishes:</label>
-                <select id="wishes" name="id" required="">
+                <label for="d-wishes">Wishes:</label>
+                <select id="d-wishes" name="id" required="">
                     {% for wish in wishes %}
                         <option value="{{ wish['wish_id'] }}">{{ wish["name"] }}</option>
                     {% endfor %}
@@ -53,17 +58,34 @@
     {% if user_type == "parent" and wishes %}
         <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
             <div class="fields">
-                <label for="wishes">Wishes:</label>
-                <select id="wishes" name="id" required="">
+                <label for="p-wishes">Wishes:</label>
+                <select id="p-wishes" name="id" required="">
                     {% for wish in wishes %}
                         <option value="{{ wish['wish_id'] }}">{{ wish["name"] }}</option>
                     {% endfor %}
                 </select>
-                <label for="wish-points">Enter Points:</label>
-                <input type="text" id="wish-points" name="points" maxlength="3" pattern="^\d+$" autocomplete="off" required="" />
+                <label for="p-points">Enter Points:</label>
+                <input type="text" id="p-points" name="points" maxlength="3" pattern="^\d+$" autocomplete="off" required="" />
             </div>
             <div class="actions">
                 <button class="larger" name="submit" value="modify">Add Points to Wish</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if user_type == "child" and wishes %}
+        <form class="plate" action="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}" method="post">
+            <div class="fields">
+                <label for="m-wishes">Wishes:</label>
+                <select id="m-wishes" name="id" required="">
+                    {% for wish in wishes %}
+                        <option value="{{ wish['wish_id'] }}">{{ wish["name"] }}</option>
+                    {% endfor %}
+                </select>
+                <label for="m-marked">Select to Mark:</label>
+                <input type="checkbox" id="m-marked" name="marked" value="marked" />
+            </div>
+            <div class="actions">
+                <button class="larger" name="submit" value="mark">Mark Wish</button>
             </div>
         </form>
     {% endif %}
@@ -75,7 +97,7 @@
                 <th>Points</th>
             </tr>
             {% for wish in wishes %}
-                <tr>
+                <tr {% if wish["marked"] == 1 %}class="marked"{% endif %} >
                     <td>{{ wish["name"] }}</td>
                     <td>{{ wish["description"] }}</td>
                     <td>{{ wish["points"] }}</td>

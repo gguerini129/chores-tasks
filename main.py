@@ -177,15 +177,17 @@ def task_list_basic(task_list_id):
             else:
                 add_task(form["name"], session["user_id"], task_list_id)
         elif form["submit"] == "delete":
-            award_points(form["id"])
+            if parent_of(session["user_id"], task_list_id):
+                award_points(form["id"])
+            
             delete_task(form["id"])
         elif form["submit"] == "modify":
             add_points_to_task(form["points"], form["id"])
         elif form["submit"] == "mark":
             if "marked" not in form:
-                unmark(form["id"])
+                unmark_task(form["id"])
             elif form["marked"] == "marked":
-                mark(form["id"])
+                mark_task(form["id"])
             else:
                 raise Exception()
         else:
@@ -285,13 +287,13 @@ def add_points_to_task(points, task_id):
     mysql.connection.commit()
     cursor.close()
 
-def mark(task_id):
+def mark_task(task_id):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("UPDATE task SET marked = 1 WHERE task_id = %s", (task_id,))
     mysql.connection.commit()
     cursor.close()
 
-def unmark(task_id):
+def unmark_task(task_id):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("UPDATE task SET marked = 0 WHERE task_id = %s", (task_id,))
     mysql.connection.commit()
@@ -322,7 +324,15 @@ def task_list_admin(task_list_id):
                     if form["user-type"] == "parent":
                         add_parent(account["user_id"], task_list_id)
                     elif form["user-type"] == "child":
-                        add_child(account["user_id"], task_list_id)
+                        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                        cursor.execute("SELECT * FROM child WHERE task_list_id = %s", (task_list_id,))
+                        
+                        if cursor.fetchone() is None:
+                            add_child(account["user_id"], task_list_id)
+                        else:
+                            error = "Child Already Assigned"
+                        
+                        cursor.close()
                     elif form["user-type"] == "guardian":
                         add_guardian(account["user_id"], task_list_id)
             else:
@@ -382,9 +392,33 @@ def task_list_wish_list(task_list_id):
             else:
                 add_wish(form["name"], session["user_id"], task_list_id)
         elif form["submit"] == "delete":
+            if parent_of(session["user_id"], task_list_id):
+                redeem_points(form["id"])
+            
             delete_wish(form["id"])
         elif form["submit"] == "modify":
             add_points_to_wish(form["points"], form["id"])
+        elif form["submit"] == "mark":
+            if "marked" not in form:
+                unmark_wish(form["id"])
+            elif form["marked"] == "marked":
+                cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.execute("SELECT * FROM child WHERE task_list_id = %s", (task_list_id,))
+                child = cursor.fetchone()
+                cursor.execute("SELECT * FROM wish WHERE wish_id = %s", (form["id"],))
+                wish = cursor.fetchone()
+                
+                if child is None:
+                    error = "Add a Child First"
+                else:
+                    if child["points"] >= wish["points"]:
+                        mark_wish(form["id"])
+                    else:
+                        error = "Insufficient Points"
+                
+                cursor.close()
+            else:
+                raise Exception()
         else:
             raise Exception()
     
@@ -407,7 +441,7 @@ def task_list_wish_list(task_list_id):
     else:
         raise Exception()
     
-    return render_template("tasklist/wishlist.html", task_list=task_list, wishes=wishes, user_type=user_type, points=points)
+    return render_template("tasklist/wishlist.html", task_list=task_list, wishes=wishes, user_type=user_type, points=points, error=error)
 
 # HELPER FUNCTIONS FOR TASK LIST WISH LIST
 def get_wishes(task_list_id):
@@ -435,9 +469,36 @@ def delete_wish(wish_id):
     mysql.connection.commit()
     cursor.close()
 
+def redeem_points(wish_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM wish WHERE wish_id = %s AND marked = 1", (wish_id,))
+    wish = cursor.fetchone()
+    
+    if wish is None:
+        cursor.close()
+        return
+    
+    points = wish["points"]
+    
+    cursor.execute("UPDATE child SET points = points - %s WHERE task_list_id = %s", (points, wish["task_list_id"]))
+    mysql.connection.commit()
+    cursor.close()
+
 def add_points_to_wish(points, wish_id):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("UPDATE wish SET points = %s WHERE wish_id = %s", (points, wish_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+def mark_wish(wish_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("UPDATE wish SET marked = 1 WHERE wish_id = %s", (wish_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+def unmark_wish(wish_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("UPDATE wish SET marked = 0 WHERE wish_id = %s", (wish_id,))
     mysql.connection.commit()
     cursor.close()
 
