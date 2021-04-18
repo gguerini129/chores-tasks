@@ -9,11 +9,13 @@
 {% block main %}
     <nav class="plate">
         <a href="{{ url_for('home') }}">Back</a>
+        {% if user_type == "child" or user_type == "parent" %}
+            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
+        {% endif %}
         {% if user_type == "parent" %}
             <a href="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}">Admin</a>
         {% endif %}
         {% if user_type == "child" or user_type == "parent" %}
-            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
             <a href="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}">Wish List</a>
         {% endif %}
     </nav>
@@ -45,16 +47,54 @@
             </div>
         </form>
     {% endif %}
+    {% if user_type == "parent" and tasks %}
+        <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
+            <div class="fields">
+                <label for="tasks">Tasks:</label>
+                <select id="tasks" name="id" required="">
+                    {% for task in tasks %}
+                        <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
+                    {% endfor %}
+                </select>
+                <label for="task-points">Enter Points:</label>
+                <input type="text" id="task-points" name="points" maxlength="2" pattern="^\d+$" autocomplete="off" required="" />
+            </div>
+            <div class="actions">
+                <button class="larger" name="submit" value="modify">Add Points to Task</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if tasks %}
+        <form class="plate" action="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}" method="post">
+            <div class="fields">
+                <label for="tasks">Tasks:</label>
+                <select id="tasks" name="id" required="">
+                    {% for task in tasks %}
+                        <option value="{{ task['task_id'] }}">{{ task["name"] }}</option>
+                    {% endfor %}
+                </select>
+                <label for="task-marked">Select to Mark:</label>
+                <input type="checkbox" id="task-marked" name="marked" value="marked" />
+            </div>
+            <div class="actions">
+                <button class="larger" name="submit" value="mark">Mark Task</button>
+            </div>
+        </form>
+    {% endif %}
     {% if tasks %}
         <table class="task-list plate">
             <tr>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Points</th>
+                <!-- <th>Marked</th> -->
             </tr>
             {% for task in tasks %}
-                <tr>
+                <tr {% if task["marked"] == 1 %}class="marked"{% endif %} >
                     <td>{{ task["name"] }}</td>
                     <td>{{ task["description"] }}</td>
+                    <td>{{ task["points"] }}</td>
+                    <!-- <td>{{ task["marked"] }}</td> -->
                 </tr>
             {% endfor %}
         </table>

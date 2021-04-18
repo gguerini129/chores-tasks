@@ -118,6 +118,11 @@ table.task-list tr:nth-of-type(even) {
     background-color: bisque;
 }
 
+/* Can't get it to only target tr's that are the direct child */
+table.task-list tr.marked {
+    background-color: palegreen;
+}
+
 table.task-list th, table.task-list td {
     word-break: break-word;
     border-style: inset;

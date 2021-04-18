@@ -9,11 +9,13 @@
 {% block main %}
     <nav class="plate">
         <a href="{{ url_for('home') }}">Back</a>
+        {% if user_type == "child" or user_type == "parent" %}
+            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
+        {% endif %}
         {% if user_type == "parent" %}
             <a href="{{ url_for('task_list_admin', task_list_id=task_list['task_list_id']) }}">Admin</a>
         {% endif %}
         {% if user_type == "child" or user_type == "parent" %}
-            <a href="{{ url_for('task_list_basic', task_list_id=task_list['task_list_id']) }}">Basic</a>
             <a href="{{ url_for('task_list_wish_list', task_list_id=task_list['task_list_id']) }}">Wish List</a>
         {% endif %}
     </nav>
